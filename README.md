@@ -47,3 +47,61 @@ systemctl start nginx
 systemctl status nginx
 ```
 ![Image alt](https://github.com/Edo1993/otus_7/raw/master/13.png)
+Далее будем использовать его для доступа к своему репозиторию.
+
+2) Создать свой репозиторий и разместить там ранее собранный RPM.
+
+Теперь приступим к созданию своего репозитория. Директория для статики у NGINX по умолчанию ```/usr/share/nginx/html```.
+Создадим там каталог repo:
+```
+mkdir /usr/share/nginx/html/repo
+```
+Копируем туда наш собранный RPM и RPM для установки репозитория Percona-Server:
+```
+cp rpmbuild/RPMS/x86_64/nginx-1.14.1-1.el7_4.ngx.x86_64.rpm /usr/share/nginx/html/repo/
+wget http://www.percona.com/downloads/percona-release/redhat/0.1-6/percona-release-0.1-6.noarch.rpm -O /usr/share/nginx/html/repo/percona-release-0.1-6.noarch.rpm
+```
+![Image alt](https://github.com/Edo1993/otus_7/raw/master/21.png)
+Инициализируем репозиторий командой:
+```
+createrepo /usr/share/nginx/html/repo/
+```
+Для прозрачности настроим в NGINX доступ к листингу каталога: в location / в файле ```/etc/nginx/conf.d/default.conf``` добавим директиву ```autoindex on```. В результате location будет выглядеть так:
+![Image alt](https://github.com/Edo1993/otus_7/raw/master/22.png)
+
+Проверяем синтаксис и перезапускаем NGINX:
+```
+nginx -t
+nginx -s reload
+```
+![Image alt](https://github.com/Edo1993/otus_7/raw/master/23.png)
+Проверим с помощью curl:
+```
+curl -a http://localhost/repo/
+```
+![Image alt](https://github.com/Edo1993/otus_7/raw/master/24.png)
+
+Все готово для того, чтобы протестировать репозиторий. Добавим его в ```/etc/yum.repos.d```:
+```
+vi /etc/yum.repos.d/otus.repo
+```
+Содержимое
+```
+[otus]
+name=otus-linux
+baseurl=http://localhost/repo
+gpgcheck=0
+enabled=1
+```
+Убедимся, что репозиторий подключился и посмотрим что в нем есть:
+```
+yum repolist enabled | grep
+yum list | grep otus
+```
+![Image alt](https://github.com/Edo1993/otus_7/raw/master/25.png)
+Так как NGINX у нас уже стоит установим репозиторий percona-release:
+```
+yum install percona-release -y
+```
+Все прошло успешно.
+В случае если вам потребуется обновить репозиторий (а это делается при каждом добавлении файлов), снова то выполните команду ```createrepo /usr/share/nginx/html/repo/```
