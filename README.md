@@ -75,6 +75,7 @@ nginx -t
 nginx -s reload
 ```
 ![Image alt](https://github.com/Edo1993/otus_7/raw/master/23.png)
+
 Проверим с помощью curl:
 ```
 curl -a http://localhost/repo/
@@ -99,6 +100,7 @@ yum repolist enabled | grep
 yum list | grep otus
 ```
 ![Image alt](https://github.com/Edo1993/otus_7/raw/master/25.png)
+
 Так как NGINX у нас уже стоит установим репозиторий percona-release:
 ```
 yum install percona-release -y
