@@ -24,7 +24,7 @@ tar -xvf latest.tar.gz
 yum-builddep rpmbuild/SPECS/nginx.spec
 ```
 Поправить сам spec файл, чтобы NGINX собирался с необходимыми опциями. 
-Результирующий spec файл получился таким ![таким](https://github.com/Edo1993/otus_7/blob/master/nginx.spec).
+Результирующий spec файл получился таким [таким](https://github.com/Edo1993/otus_7/blob/master/nginx.spec).
 Путь до openssl указываем ДО каталога (внимательнее с openssl-1.1.1d - зависит от скачанной вами версии):
 ```
 --with-openssl=/root/openssl-1.1.1d
